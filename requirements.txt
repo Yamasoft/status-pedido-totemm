@@ -4,4 +4,4 @@ requests
 pillow
 qrcode
 gunicorn==20.1.0
-
+eventlet>=0.24.1
