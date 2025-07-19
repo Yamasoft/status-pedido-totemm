@@ -3,3 +3,5 @@ flask_socketio
 requests
 pillow
 qrcode
+gunicorn==20.1.0
+
