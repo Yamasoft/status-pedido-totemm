@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Acesso do Operador</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #ECEFF1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        input[type="password"] {
+            font-size: 18px;
+            padding: 10px;
+            width: 220px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 30px;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .erro {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Acesso do Operador</h2>
+        <form method="POST" action="/admin">
+            <input type="password" name="senha" placeholder="Digite a senha" required><br>
+            <button type="submit">Entrar</button>
+        </form>
+        {% if erro %}
+        <div class="erro">{{ erro }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
+l>

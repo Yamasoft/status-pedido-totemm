@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Selecione uma Empresa</title>
+  <link rel="stylesheet" href="estilo.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f6ee;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      background-color: #FF6600;
+      color: white;
+      padding: 30px 0;
+      margin: 0;
+      font-size: 36px;
+    }
+
+    .empresas-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .empresa {
+      background-color: #0277BD;
+      color: white;
+      width: 300px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .empresa:hover {
+      transform: scale(1.05);
+      background-color: #01579B;
+    }
+  </style>
+</head>
+<body>
+  <h1>SELECIONE UMA EMPRESA</h1>
+  <div class="empresas-container" id="empresas-lista">
+    <!-- As empresas serão inseridas aqui via JS -->
+  </div>
+
+  <script>
+    fetch('/empresas')
+      .then(res => res.json())
+      .then(empresas => {
+        const container = document.getElementById("empresas-lista");
+        empresas.forEach(empresa => {
+          const div = document.createElement("div");
+          div.className = "empresa";
+          div.textContent = empresa.nome;
+          div.onclick = () => {
+            localStorage.setItem("empresa_id", empresa.id);
+            window.location.href = "index.html";
+          };
+          container.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>

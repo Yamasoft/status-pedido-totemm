@@ -1,0 +1,351 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #FFF7E6;
+  padding-bottom: 60px; /* evita que botões fiquem cobertos pelo rodapé fixo */
+}
+
+.cabecalho {
+  background: #C62828;
+  color: #fff;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  padding: 14px 10px;
+}
+
+/* Categorias */
+#categorias {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 10px;
+  background: #FFCCBC;
+  border-bottom: 2px solid #D84315;
+}
+
+#categorias button {
+  background: #EF6C00;
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 8px 18px;
+  font-size: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#categorias button.active {
+  background: #D32F2F;                /* Vermelho equilibrado */
+  color: #fff;
+  font-weight: bold;
+  transform: scale(1.1);              /* Leve aumento sem encostar */
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+#categorias button:hover {
+  background: #B71C1C;
+}
+
+
+
+/* Layout pedidos */
+.layout-pedidos {
+  display: flex;
+  height: calc(100vh - 154px);
+}
+
+.coluna-esquerda {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.produtos {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.produto-card {
+  background: #FDF5E6;
+  border: 1px solid #CCC;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+}
+
+.produto-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: contain;
+  margin-bottom: 6px;
+  border-radius: 8px;
+}
+
+.produto-card h3 {
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.produto-card p {
+  margin: 2px 0;
+  font-weight: bold;
+  color: #2E7D32;
+}
+
+/* Coluna Carrinho */
+.coluna-direita {
+  width: 340px;
+  border-left: 3px solid #BDBDBD;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+#itens-carrinho {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.pedido-total {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.item-linha {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 8px;
+  margin-bottom: 6px;
+  background: #FFF3E0;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.item-linha .desc {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.item-linha .preco {
+  font-size: 13px;
+  color: #555;
+}
+
+.botoes-qtd {
+  display: flex;
+  gap: 4px;
+}
+
+.botoes-qtd button {
+  background: #E53935;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 16px;
+}
+
+.botoes-qtd .lixeira {
+  background: #757575;
+}
+
+/* Botões de pagamento padrão (posicionados abaixo do total) */
+.botoes-pagamento {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.botoes-pagamento button {
+  flex: 1;
+  font-size: 20px;
+  padding: 16px;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.botoes-pagamento button:nth-child(1) {
+  background: #43A047;  /* Verde */
+}
+
+.botoes-pagamento button:nth-child(2),
+.botoes-pagamento .cancelar {
+  background: #D32F2F !important; /* Vermelho */
+}
+/* Botão DÉBITO - visível e legível */
+.botoes-pagamento button:nth-child(3) {
+  background: #00897B;   /* verde petróleo */
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Botão VOLTAR ÀS COMPRAS - cinza escuro */
+.botoes-pagamento button:nth-child(4) {
+  background: #546E7A;   /* azul acinzentado */
+  color: #fff;
+  font-weight: bold;
+}
+
+
+/* Responsivo para tablets e notebooks em modo paisagem */
+@media (orientation: landscape) and (max-height: 900px) {
+  .coluna-direita { width: 22vw; max-width: 320px; padding: 10px; }
+  .coluna-esquerda { flex: 1; }
+  .produtos {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
+  .produto-card img { max-width: 90px; max-height: 90px; }
+  .item-linha { padding: 4px 6px; }
+  .botoes-qtd button { font-size: 15px; padding: 2px 5px; }
+}
+
+
+/* ✅ Modo retrato no totem (monitor 23,8") */
+@media (min-height: 1800px) and (max-width: 1100px) {
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .layout-pedidos {
+    display: flex;
+    height: 95vh;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* leve sombra geral */
+    border-radius: 10px;
+  }
+
+  .coluna-esquerda {
+    width: calc(100% - 360px);
+    display: flex;
+    flex-direction: column;
+    background-color: #FFF7E6;
+    border-right: 1px solid #DDD; /* borda sutil entre colunas */
+  }
+
+  .categorias {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 12px 20px;
+    background: #FFCCBC;
+    border-bottom: 2px solid #D84315;
+    box-sizing: border-box;
+    z-index: 1;
+  }
+
+  .produtos {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    box-sizing: border-box;
+    /* rodapé visual discreto */
+    border-bottom: 3px solid #EEE;
+  }
+
+  .produto-card {
+    border: 1px solid #CCC;
+    border-radius: 12px;
+    background: #FDF5E6;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .produto-card img {
+    height: 220px;
+    object-fit: contain;
+    margin-bottom: 8px;
+  }
+
+  .produto-card h3 {
+    font-size: 20px;
+    text-align: center;
+    margin: 4px 0;
+  }
+
+  .produto-card p {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2E7D32;
+    margin: 0;
+  }
+
+  .coluna-direita {
+    width: 360px;
+    border-left: 1px solid #DDD;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    background-color: #FFFDF5;
+  }
+
+  #itens-carrinho {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 60vh;
+  }
+
+  .botoes-pagamento button {
+    font-size: 24px;
+    padding: 16px 0;
+    border-radius: 12px;
+  }
+
+  .pedido-total {
+    font-size: 20px;
+    margin: 12px 0;
+    text-align: right;
+  }
+}
+.rodape-totem {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  font-size: 16px;
+  background: #FFF3E0;
+  border-top: 1px solid #DDD;
+  font-weight: bold;
+  color: #444;
+  z-index: 100;
+}
+
+.rodape-totem .marca {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1565C0;
+}
+
+.rodape-totem .verde {
+  color: #2E7D32;
+}
+
+.rodape-totem .azul {
+  color: #1565C0;
+}

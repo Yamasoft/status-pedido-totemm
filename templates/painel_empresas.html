@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Empresas - Painel</title>
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color: #2E3B4E;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .empresas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 30px;
+            gap: 30px;
+        }
+
+        .empresa {
+            background-color: #ffffff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            padding: 20px 40px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            transition: 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .empresa:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>Selecione uma Empresa</h1>
+    <div class="empresas" id="lista-empresas"></div>
+
+    <script>
+        fetch("/empresas")
+            .then(res => res.json())
+            .then(empresas => {
+                const container = document.getElementById("lista-empresas");
+                empresas.forEach(emp => {
+                    const div = document.createElement("div");
+                    div.className = "empresa";
+                    div.textContent = emp.nome;
+                    div.addEventListener("click", () => {
+                        window.location.href = `/painel?empresa_id=${emp.id}`;
+                    });
+                    container.appendChild(div);
+                });
+            });
+    </script>
+</body>
+</html>
+tml>

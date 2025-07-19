@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-Br">
+<head>
+    <meta charset="UTF-8">
+    <title>Status do Pedido</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/frontend/estilo.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .empresa {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .status-box {
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 600px;
+            color: white;
+            font-size: 22px;
+        }
+
+        .status-preparando {
+            background-color: #D32F2F;
+        }
+
+        .status-pronto {
+            background-color: #FBC02D;
+            color: #333;
+        }
+
+        .status-retirado {
+            background-color: #43A047;
+        }
+
+        .senha {
+            font-size: 80px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .mensagem {
+            font-size: 24px;
+            margin-top: 15px;
+        }
+
+        .produtos {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .produtos h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .produtos ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .produtos li {
+            font-size: 20px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .alerta-som {
+            font-size: 18px;
+            color: #555;
+            margin-top: 10px;
+            animation: piscar 1s infinite;
+        }
+
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body onclick="desbloquearAudio()">
+<div class="container">
+    <div class="empresa">{{ nome_empresa }}</div>
+    <div id="statusBox" class="status-box status-preparando">
+        <div class="senha" id="senha">Pedido #{{ senha }}</div>
+        <div class="mensagem" id="mensagem">Estamos preparando seu pedido</div>
+    </div>
+    <div class="produtos" id="produtos" style="display:none">
+        <h3>Produtos do Pedido</h3>
+        <ul id="listaProdutos"></ul>
+    </div>
+    <div id="alertaToque" class="alerta-som">🔊 Toque na tela para ativar notificações sonoras</div>
+</div>
+
+<!-- 🔊 Elemento de áudio -->
+<audio id="som-pronto" src="/static/sons/pedido_pronto.mp3" preload="auto"></audio>
+
+<script>
+    const senha = '{{ senha }}';
+    let statusAtual = "preparando";
+    let audioLiberado = false;
+
+    function desbloquearAudio() {
+        if (audioLiberado) return;
+        const audio = document.getElementById("som-pronto");
+        audio.play().then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audioLiberado = true;
+            document.getElementById("alertaToque").style.display = "none";
+        }).catch(() => {});
+    }
+
+    function buscarStatus() {
+        fetch(`/status_atual/${senha}`)
+            .then(res => res.json())
+            .then(data => {
+                const statusBox = document.getElementById("statusBox");
+                const mensagem = document.getElementById("mensagem");
+
+                if (data.status === "pronto") {
+                    if (statusAtual !== "pronto" && audioLiberado) {
+                        document.getElementById("som-pronto").play().catch(e => console.log("Erro ao tocar som:", e));
+                    }
+                    statusAtual = "pronto";
+                    statusBox.className = "status-box status-pronto";
+                    mensagem.textContent = "Seu pedido está pronto para retirada!";
+                } else if (data.status === "retirado" || data.status === "finalizado") {
+                    statusAtual = "retirado";
+                    statusBox.className = "status-box status-retirado";
+                    mensagem.textContent = "Pedido já retirado. Obrigado!";
+                } else {
+                    statusAtual = "preparando";
+                    statusBox.className = "status-box status-preparando";
+                    mensagem.textContent = "Estamos preparando seu pedido";
+                }
+            });
+    }
+
+    function carregarProdutos() {
+        fetch(`/produtos_do_pedido/${senha}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.length > 0) {
+                    document.getElementById("produtos").style.display = "block";
+                    const ul = document.getElementById("listaProdutos");
+                    ul.innerHTML = "";
+                    data.forEach(item => {
+                        const li = document.createElement("li");
+                        li.textContent = `${item.quantidade}x ${item.nome}`;
+                        ul.appendChild(li);
+                    });
+                }
+            });
+    }
+
+    buscarStatus();
+    carregarProdutos();
+    setInterval(buscarStatus, 4000);
+</script>
+</body>
+</html>

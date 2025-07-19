@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel de Pedidos</title>
+  <style>
+    body {
+      background-color: #f4f4f4;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 40px;
+      color: white;
+      background-color: #1a2c3b;
+      padding: 20px;
+      text-align: center;
+      margin: 0;
+    }
+
+    .legenda {
+      text-align: center;
+      padding: 10px;
+      background-color: #e1e1e1;
+      font-size: 16px;
+    }
+
+    .lista-pedidos {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .pedido {
+      padding: 20px;
+      border-radius: 12px;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pedido:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .preparando {
+      background-color: #D32F2F;
+    }
+
+    .pronto {
+      background-color: #FBC02D;
+      color: #333;
+    }
+
+    .retirado {
+      background-color: #388E3C;
+    }
+
+    .produtos {
+      font-size: 17px;
+      font-weight: normal;
+      margin-top: 10px;
+      padding-left: 18px;
+      line-height: 1.4;
+    }
+
+    .produtos li {
+      list-style: disc;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      text-align: center;
+      font-size: 18px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content button {
+      padding: 10px 20px;
+      margin: 15px;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-sim {
+      background-color: #388E3C;
+      color: white;
+    }
+
+    .btn-nao {
+      background-color: #D32F2F;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Painel de Pedidos</h1>
+
+  <div class="legenda">
+    🔴 Em Preparo &nbsp;&nbsp; 🟡 Pronto para Retirada &nbsp;&nbsp; 🟢 Retirado
+  </div>
+
+  <div class="lista-pedidos" id="lista-pedidos"></div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content" id="modal-content">
+      <p id="mensagem"></p>
+      <button class="btn-sim" id="btn-sim">Sim</button>
+      <button class="btn-nao" onclick="fecharModal()">Não</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    const lista = document.getElementById("lista-pedidos");
+    const modal = document.getElementById("modal");
+    const mensagem = document.getElementById("mensagem");
+    const btnSim = document.getElementById("btn-sim");
+
+    let pedidoSelecionado = null;
+    let proximoStatus = null;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const empresa_id = urlParams.get("empresa_id");
+
+    async function carregarPedidos() {
+      const resposta = await fetch(`/pedidos_em_aberto?empresa_id=${empresa_id}`);
+      const pedidos = await resposta.json();
+
+      const existentes = Array.from(document.getElementsByClassName('pedido')).map(div => parseInt(div.dataset.id));
+      const idsAtuais = pedidos.map(p => p.id);
+
+      // Remove pedidos que saíram
+      existentes.forEach(id => {
+        if (!idsAtuais.includes(id)) {
+          const el = document.querySelector(`.pedido[data-id="${id}"]`);
+          if (el) el.remove();
+        }
+      });
+
+      for (const pedido of pedidos) {
+        let div = document.querySelector(`.pedido[data-id="${pedido.id}"]`);
+
+        if (!div) {
+          div = document.createElement("div");
+          div.classList.add("pedido");
+          div.dataset.id = pedido.id;
+          div.addEventListener("click", () => {
+            pedidoSelecionado = pedido.id;
+            proximoStatus = (pedido.pronto + 1) % 3;
+            const statusTexto = ["em preparo", "pronto para retirada", "retirado"];
+            mensagem.innerHTML = `Deseja marcar o pedido <b>#${pedido.id}</b> como <b>${statusTexto[proximoStatus]}</b>?`;
+            modal.style.display = "block";
+          });
+          lista.appendChild(div);
+        }
+
+        div.className = "pedido";
+        div.classList.add(pedido.pronto == 0 ? "preparando" : pedido.pronto == 1 ? "pronto" : "retirado");
+
+        div.innerHTML = `Pedido #${pedido.id}<ul class="produtos" id="prod-${pedido.id}"><li>Carregando...</li></ul>`;
+
+        const ul = div.querySelector("ul");
+        if (!ul.dataset.carregado) {
+          const resProdutos = await fetch(`/produtos_pedido/${pedido.id}`);
+          const itens = await resProdutos.json();
+          ul.innerHTML = "";
+          itens.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = `${item.quantidade}x ${item.nome}`;
+            ul.appendChild(li);
+          });
+          ul.dataset.carregado = "true";
+        }
+      }
+    }
+
+    btnSim.onclick = async function () {
+      if (pedidoSelecionado !== null) {
+        await fetch(`/atualizar_status/${pedidoSelecionado}/${proximoStatus}`);
+        carregarPedidos();
+        fecharModal();
+      }
+    };
+
+    function fecharModal() {
+      modal.style.display = "none";
+      pedidoSelecionado = null;
+      proximoStatus = null;
+    }
+
+    carregarPedidos();
+    setInterval(carregarPedidos, 5000);
+  </script>
+</body>
+</html>

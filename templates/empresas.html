@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Selecione uma Empresa</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='frontend/estilo.css') }}">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #F5F5F5;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      background-color: #1976D2;
+      color: white;
+      padding: 30px 0;
+      font-size: 32px;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    .empresas-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .empresa {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .empresa:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .empresa-logo {
+      max-width: 120px;
+      max-height: 120px;
+      margin-bottom: 15px;
+      object-fit: contain;
+    }
+
+    .empresa span {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    @media (orientation: portrait) {
+      h1 {
+        font-size: 28px;
+      }
+      .empresa span {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>SELECIONE UMA EMPRESA</h1>
+  <div class="empresas-container" id="empresas-lista"></div>
+
+  <script>
+    fetch('/empresas')
+      .then(res => res.json())
+      .then(empresas => {
+        const container = document.getElementById("empresas-lista");
+        empresas.forEach(empresa => {
+          const card = document.createElement("div");
+          card.className = "empresa";
+
+          if (empresa.logo) {
+            const img = document.createElement("img");
+            img.src = empresa.logo;
+            img.alt = empresa.nome;
+            img.className = "empresa-logo";
+            card.appendChild(img);
+          }
+
+          const nome = document.createElement("span");
+          nome.textContent = empresa.nome;
+          card.appendChild(nome);
+
+          card.onclick = () => {
+            window.location.href = "/pedido?empresa_id=" + empresa.id;
+          };
+
+          container.appendChild(card);
+        });
+      });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      localStorage.removeItem('total_carrinho');
+      localStorage.removeItem('carrinho_itens');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Pedidos</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #F5F5F5;
+        }
+
+        header {
+            background-color: #2C3E50;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .pedido {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            font-size: 26px;
+            font-weight: bold;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .pedido:hover {
+            transform: scale(1.05);
+        }
+
+        .tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .pedido:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .status-0 { background-color: #D32F2F; }
+        .status-1 { background-color: #FBC02D; }
+        .status-2 { background-color: #388E3C; }
+
+        .legenda {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .legenda span {
+            display: inline-block;
+            margin: 0 10px;
+            font-size: 16px;
+        }
+
+        .cor {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: 4px;
+        }
+
+        .cor.vermelho { background-color: #D32F2F; }
+        .cor.amarelo { background-color: #FBC02D; }
+        .cor.verde   { background-color: #388E3C; }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧾 Controle de Pedidos</h1>
+    </header>
+
+    <div class="legenda">
+        <span><span class="cor vermelho"></span> Aguardando</span>
+        <span><span class="cor amarelo"></span> Em Preparo</span>
+        <span><span class="cor verde"></span> Pronto</span>
+    </div>
+
+    <div class="container" id="painelPedidos">
+        <!-- Os pedidos serão inseridos dinamicamente -->
+    </div>
+
+    <script>
+        async function carregarPedidos() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const empresa_id = urlParams.get("empresa_id");
+            if (!empresa_id) return;
+
+            const res = await fetch("/pedidos_em_aberto?empresa_id=" + empresa_id);
+            const pedidos = await res.json();
+
+            const container = document.getElementById("painelPedidos");
+            container.innerHTML = "";
+
+            pedidos.forEach(p => {
+                const div = document.createElement("div");
+                div.className = "pedido status-" + p.pronto;
+
+                const tooltip = document.createElement("div");
+                tooltip.className = "tooltip";
+                tooltip.innerHTML = `<strong>Pedido #${p.id}</strong><br>
+                                     Empresa: ${p.empresa_nome}<br>
+                                     Valor: R$ ${p.valor_total.toFixed(2)}<br>
+                                     Status: ${p.pronto == 2 ? "Pronto" : p.pronto == 1 ? "Em Preparo" : "Aguardando"}`;
+
+                div.textContent = p.id;
+                div.appendChild(tooltip);
+
+                div.onclick = () => {
+                    const novoStatus = (p.pronto + 1) % 3;
+                    fetch("/atualizar_status", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ pedido_id: p.id, status: novoStatus })
+                    }).then(() => carregarPedidos());
+                };
+
+                container.appendChild(div);
+            });
+        }
+
+        setInterval(carregarPedidos, 5000);
+        carregarPedidos();
+    </script>
+</body>
+</html>

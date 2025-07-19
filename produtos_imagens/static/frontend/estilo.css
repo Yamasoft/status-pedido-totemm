@@ -1,0 +1,52 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fdf6e3;
+    margin: 0;
+    padding: 0;
+}
+.cabecalho {
+    background-color: #D32F2F;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+#categorias button {
+    background-color: #D32F2F;
+    color: white;
+    margin: 4px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+}
+.produto {
+    display: inline-block;
+    width: 140px;
+    margin: 8px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: white;
+    vertical-align: top;
+    text-align: center;
+}
+.produto img {
+    max-width: 120px;
+    max-height: 120px;
+}
+#itens-carrinho {
+    border: 1px solid #ccc;
+    background: white;
+    padding: 10px;
+}
+.botoes-pagamento button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    font-size: 18px;
+    border: none;
+    margin-top: 8px;
+}

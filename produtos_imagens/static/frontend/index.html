@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Totem de Vendas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='frontend/estilo.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2 id="titulo-empresa" style="text-align:center; margin-bottom: 10px;"></h2>
+        <div class="categorias" id="categorias"></div>
+        <div class="produtos" id="produtos"></div>
+        <div class="carrinho">
+            <div id="itens-carrinho"></div>
+            <div id="total-pedido">Total: R$ 0,00</div>
+            <div class="botoes-pagamento">
+                <button onclick="pagar('pix')">Pagar com PIX</button>
+                <button onclick="pagar('credito')">Crédito</button>
+                <button onclick="pagar('debito')">Débito</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-pix" class="modal">
+        <div class="modal-conteudo">
+            <span class="fechar" onclick="fecharModal()">&times;</span>
+            <h3>Escaneie o QR Code para pagar via PIX</h3>
+            <div id="qr-code"></div>
+            <p id="status-pagamento">Aguardando pagamento...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='frontend/script.js') }}"></script>
+</body>
+</html>

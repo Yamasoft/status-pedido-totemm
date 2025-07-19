@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Totem de Vendas</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='frontend/estilo.css') }}">
+
+    <!-- ⬇️  AQUI: empresa_id vindo do Flask -->
+    <script>
+      window.EMPRESA_ID = {{ empresa_id }};
+    </script>
+
+    <!-- JS principal -->
+    <script defer
+            src="{{ url_for('static', filename='frontend/script.js') }}">
+    </script>
+</head>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // pede fullscreen no primeiro toque (exigência de browsers mobile)
+  document.body.addEventListener('click', full, { once:true });
+  function full(){
+    const de = document.documentElement;
+    if (de.requestFullscreen) de.requestFullscreen();
+  }
+});
+</script>
+
+<body>
+    <div class="cabecalho">Selecione seu Pedido</div>
+
+    <!-- ✅ Faixa de categorias agora fora das colunas -->
+    <div class="categorias" id="categorias"></div>
+
+    <div class="layout-pedidos">
+        <div class="coluna-esquerda">
+            <div class="produtos" id="produtos"></div>
+        </div>
+
+        <div class="coluna-direita">
+            <div id="itens-carrinho"></div>
+
+            <div class="pedido-total" id="total-pedido">Total: R$ 0,00</div>
+
+            <div class="botoes-pagamento">
+                <button onclick="irParaPagamento()">👉 IR PARA PAGAMENTO</button>
+                <button class="cancelar" onclick="cancelarPedido()">Cancelar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pix -->
+    <div id="modal-pix" class="modal" style="display:none;">
+        <div class="modal-conteudo">
+            <span class="fechar" onclick="fecharModal()">&times;</span>
+            <h3>Escaneie o QR Code para pagar via PIX</h3>
+            <div id="qr-code"></div>
+            <p id="status-pagamento">Aguardando pagamento…</p>
+        </div>
+    </div>
+
+    <!-- Rodapé fixo -->
+    <div class="rodape-totem">
+        <span class="marca">Totem<span class="verde">GO</span></span> –
+        <span class="slogan">
+            <span class="azul">Rápido</span> e <span class="verde">simples</span>
+        </span>
+    </div>
+</body>
+</html>

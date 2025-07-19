@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='frontend/estilo.css') }}">
+
+    <!-- Scripts -->
+    <script>
+        // Deixa o ID da empresa acessível no script_pagamento.js
+        let empresa_id = {{ empresa_id }};
+    </script>
+    <script defer src="{{ url_for('static', filename='frontend/script_pagamento.js') }}"></script>
+</head>
+
+<body>
+    <!-- Cabeçalho -->
+    <div class="cabecalho" id="cabecalho">Selecione a Forma de Pagamento</div>
+
+    <!-- Valor Total -->
+    <h2 id="valor-total" style="color:green; text-align:center; margin-top:20px;">
+        Total: R$ 0,00
+    </h2>
+
+    <!-- Área do QR Code (invisível até o cliente escolher PIX) -->
+    <div id="area-pix" style="text-align:center; margin-top:20px; display:none;">
+        <h3 style="color:#1976D2;">➡ Escaneie o QR Code para pagar via PIX</h3>
+        <div id="qr-code" style="margin:10px;"></div>
+        <p id="status-pagamento" style="margin-top:10px; color:#333;">Aguardando pagamento...</p>
+    </div>
+
+    <div id="area-manutencao" style="display:none;">
+    <div style="
+        background-color: #FFF3E0;
+        border: 3px solid #FF9800;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 20px auto;
+        max-width: 90%;
+        color: #BF360C;
+        font-size: 22px;
+        font-weight: bold;
+        text-align: center;
+    ">
+        ⚠️ O módulo de pagamento está temporariamente indisponível.<br>
+        Por favor, escolha outra forma de pagamento.
+    </div>
+</div>
+
+    <!-- Botões de Pagamento -->
+    <div class="botoes-pagamento" style="margin-top:20px;">
+        <button id="btn-pix">PIX</button>
+        <button id="btn-credito">CRÉDITO</button>
+        <button id="btn-debito">DÉBITO</button>
+        <button id="btn-voltar">← VOLTAR ÀS COMPRAS</button>
+        <button id="btn-cancelar" class="cancelar">CANCELAR</button>
+    </div>
+    <div class="rodape-totem">
+        <span class="marca">Totem<span class="verde">GO</span></span> –
+        <span class="slogan">
+            <span class="azul">Rápido</span> e <span class="verde">simples</span>
+        </span>
+    </div>
+</body>
+</html>

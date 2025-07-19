@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Selecione a Empresa</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='frontend/estilo.css') }}">
+  <style>
+    body { text-align: center; padding: 30px; font-family: Arial, sans-serif; background-color: #f5f5f5; }
+    .empresa-btn {
+      background-color: #1976D2;
+      color: white;
+      padding: 20px 40px;
+      margin: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .empresa-btn:hover {
+      background-color: #1565C0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Selecione uma Empresa</h1>
+  <div id="empresas"></div>
+
+  <script>
+    fetch('/empresas')
+      .then(response => response.json())
+      .then(empresas => {
+        const container = document.getElementById('empresas');
+        empresas.forEach(empresa => {
+          const btn = document.createElement('button');
+          btn.innerText = empresa.nome;
+          btn.className = 'empresa-btn';
+          btn.onclick = () => {
+            window.location.href = `/totem_web?empresa_id=${empresa.id}`;
+          };
+          container.appendChild(btn);
+        });
+      });
+  </script>
+</body>
+</html>
