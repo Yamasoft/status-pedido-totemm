@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: totem-backend
+    name: painel-de-pedidos
     runtime: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "python api_backend.py"
+    startCommand: "gunicorn api_backend:app"
     envVars:
       - key: FLASK_ENV
         value: production
