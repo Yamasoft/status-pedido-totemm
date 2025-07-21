@@ -5,7 +5,8 @@ from api import criar_cobranca, status_cobranca
 from impressao_recibo import salvar_e_imprimir
 from datetime import datetime
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+#app = Flask(__name__, static_folder="static", template_folder="templates")
+app = Flask(__name__)
 app.config['SECRET_KEY'] = 'chave-secreta'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -216,12 +217,8 @@ def pagamento():
         return redirect(f"/pedido?empresa_id={empresa_id}")
 
     return render_template("pagamento.html", empresa_id=empresa_id)
+import os
 
-# ─── EXECUÇÃO ────────────────────────────────────────────
 if __name__ == "__main__":
-    hostname = socket.gethostname()
-    local_ip = socket.gethostbyname(hostname)
-    print(f"\nServidor iniciado: http://{local_ip}:5000/\n")
-
-    # webbrowser.open(f"http://{local_ip}:5000/")
-    socketio.run(app, host="0.0.0.0", port=5000, debug=False, allow_unsafe_werkzeug=True)
+    port = int(os.environ.get("PORT", 5000))  # <-- usa a porta certa
+    socketio.run(app, host="0.0.0.0", port=port, debug=False, allow_unsafe_werkzeug=True)
